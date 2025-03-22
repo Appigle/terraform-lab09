@@ -1,0 +1,42 @@
+name: Terraform CI - CD Pipline Automation 
+
+# action - when 
+on: 
+  push: 
+    branches:
+      - main
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+  AWS_REGION: ${{ secrets.region }}
+  
+jobs: 
+  provision-infrastructure-using-terraform: 
+    name: provision-infrastructure-using-terraform
+    runs-on: ubuntu-latest 
+    
+    steps: 
+      - name: Checkout Repository 
+        uses: actions/checkout@v2 
+
+      - name: Setting Up The Terraform Versions
+        uses: hashicorp/setup-terraform@v1
+        with: 
+          terraform_version: 1.11.1
+
+      - name: Initialize Terraform 
+        run: terraform init 
+
+      - name: Format the Terraform code 
+        run: terraform fmt
+
+      - name: Validate the Infrastructure
+        run: terraform validate
+
+      - name: Planning the Terraform Changes
+        run: terraform plan 
+
+      - name: Apply the Terraform Changes
+        run: terraform apply -auto-approve
