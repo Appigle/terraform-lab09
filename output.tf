@@ -1,7 +1,17 @@
-output "rds_public_hostname" {
-  value = aws_db_instance.postgres_db.address
+output "load_balancer_dns" {
+  value = aws_lb.nginx.dns_name
 }
 
-output "rds_port" {
-  value = aws_db_instance.postgres_db.port
+output "webserver_public_ips" {
+  value = {
+    for k, v in aws_instance.webservers : k => v.public_ip
+  }
+}
+
+output "environment" {
+  value = local.environment
+}
+
+output "security_group_rule_count" {
+  value = length(local.public_sg_rules)
 }

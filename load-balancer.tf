@@ -1,15 +1,15 @@
 # LOAD BALANCER 
 resource "aws_lb" "nginx" {
-  name               = "prog8830-lb-tf"
+  name               = "nginx-lb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.load_balancer_sec_group.id]
-  subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
+  subnets            = [for subnet in aws_subnet.public_subnets : subnet.id]
 
   enable_deletion_protection = true
 
   tags = {
-    Name = "us-east-1"
+    Name = "PROP8830-GROUP1-LAB08"
   }
 }
 
@@ -31,14 +31,10 @@ resource "aws_lb_listener" "front_end" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "nginx1" {
-  target_group_arn = aws_lb_target_group.nginx_target_group.arn
-  target_id        = aws_instance.webserver1.id
-  port             = 80
-}
+resource "aws_lb_target_group_attachment" "nginx_attachments" {
+  for_each = aws_instance.webservers
 
-resource "aws_lb_target_group_attachment" "nginx2" {
   target_group_arn = aws_lb_target_group.nginx_target_group.arn
-  target_id        = aws_instance.webserver2.id
+  target_id        = each.value.id
   port             = 80
 }
