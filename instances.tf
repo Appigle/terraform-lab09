@@ -8,7 +8,7 @@ locals {
   instance_configs = {
     for i in range(local.instance_count) : "nginx${i + 1}" => {
       subnet_id = i % 2 == 0 ? aws_subnet.public_subnets["subnet1"].id : aws_subnet.public_subnets["subnet2"].id
-      name      = lower("nginx-server-${i + 1}-${local.environment}")
+      name      = replace(lower("nginx-server-${i + 1}-${local.environment}"), "-", "_")
     }
   }
 }
@@ -17,9 +17,9 @@ resource "aws_instance" "webservers" {
   for_each = local.instance_configs
 
   ami           = "ami-084568db4383264d4"
-  instance_type = "t3.micro"
+  instance_type = coalesce(var.instance_type, "t3.micro")
 
-  vpc_security_group_ids = [aws_security_group.load_balancer_sec_group.id]
+  vpc_security_group_ids = [aws_security_group.public_security_group.id]
   subnet_id              = each.value.subnet_id
 
   user_data = file("./setup-nginx.sh")
@@ -32,6 +32,6 @@ resource "aws_instance" "webservers" {
 }
 
 resource "aws_iam_instance_profile" "nginx_profile" {
-  name = lower("nginx-profile-${local.environment}")
+  name = replace(lower("nginx-profile-${local.environment}"), "-", "_")
   role = "LabRole"
 }

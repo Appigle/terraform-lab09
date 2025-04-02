@@ -1,10 +1,14 @@
 resource "aws_s3_bucket" "web_bucket" {
-  bucket        = "prog8830-week-10"
+  bucket        = "prog8830-g1-lab08-${random_id.bucket_suffix.hex}"
   force_destroy = true
 
   tags = {
     Name = "PROP8830-GROUP1-LAB08"
   }
+}
+
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
 }
 
 resource "aws_s3_bucket_versioning" "web_bucket_versioning" {

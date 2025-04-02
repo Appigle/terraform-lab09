@@ -30,6 +30,7 @@ resource "aws_subnet" "public_subnets" {
 
   vpc_id                  = aws_vpc.webapp.id
   cidr_block              = each.value.cidr_block
+  availability_zone       = var.availability_zones[each.key]
   map_public_ip_on_launch = true
   tags = {
     "Name" = "PROP8830-GROUP1-LAB08"

@@ -59,9 +59,9 @@ resource "aws_security_group" "public_security_group" {
   }
 
   tags = {
-    Name        = "PROP8830-GROUP1-LAB08"
-    MinPort     = local.min_port
-    MaxPort     = local.max_port
+    Name    = "PROP8830-GROUP1-LAB08"
+    MinPort = local.min_port
+    MaxPort = local.max_port
   }
 }
 
